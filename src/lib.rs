@@ -86,7 +86,7 @@ macro_rules! external_library(
         $(varargs: $(fn $vname: ident($($vargs: ty),+ ...) -> $vret: ty),+)|*
     ) => (
     impl $structname {
-        pub fn open(name: &str) -> Result<$structname, DlError> {
+        pub fn open(name: &str) -> Result<$structname, $crate::DlError> {
             let cname = match ::std::ffi::CString::new(name) {
                 Ok(cs) => cs,
                 Err(_) => Err($crate::DlError::NotFound)
