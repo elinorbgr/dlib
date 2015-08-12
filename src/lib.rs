@@ -63,7 +63,7 @@ pub enum DlError {
 #[cfg(feature = "dlopen")]
 #[macro_export]
 macro_rules! external_library(
-    (__struct, $structname: ident, $link: expr,
+    (__struct, $structname: ident,
         $(statics: $($sname: ident: $stype: ty),+)|*
         $(functions: $(fn $fname: ident($($farg: ty),*) -> $fret:ty),+)|*
         $(varargs: $(fn $vname: ident($($vargs: ty),+ ...) -> $vret: ty),+)|*
@@ -131,7 +131,7 @@ macro_rules! external_library(
         }
     }
     );
-    ($structname: ident,
+    ($structname: ident, $link: expr,
         $(statics: $($sname: ident: $stype: ty),+)|*
         $(functions: $(fn $fname: ident($($farg: ty),*) -> $fret:ty),+)|*
         $(varargs: $(fn $vname: ident($($vargs: ty),+ ...) -> $vret: ty),+)|*
