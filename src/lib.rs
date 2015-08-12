@@ -89,7 +89,7 @@ macro_rules! external_library(
         pub fn open(name: &str) -> Result<$structname, $crate::DlError> {
             let cname = match ::std::ffi::CString::new(name) {
                 Ok(cs) => cs,
-                Err(_) => Err($crate::DlError::NotFound)
+                Err(_) => return Err($crate::DlError::NotFound)
             };
             unsafe {
                 let dl = $crate::ffi::dlopen(cname.as_bytes_with_nul().as_ptr() as *const _, 1);
