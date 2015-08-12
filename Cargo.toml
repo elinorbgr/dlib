@@ -1,0 +1,10 @@
+[package]
+name = "dlib"
+version = "0.1.0"
+authors = ["Victor Berger <victor.berger@m4x.org>"]
+
+[dependencies]
+libc = "0.1"
+
+[features]
+dlopen = []
