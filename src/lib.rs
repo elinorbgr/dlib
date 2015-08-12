@@ -89,12 +89,12 @@ macro_rules! external_library(
         pub fn open(name: &str) -> Result<$structname, DlError> {
             let cname = match ::std::ffi::CString::new(name) {
                 Ok(cs) => cs,
-                Err(_) => Err(DlError::NotFound)
+                Err(_) => Err($crate::DlError::NotFound)
             };
             unsafe {
                 let dl = $crate::ffi::dlopen(cname.as_bytes_with_nul().as_ptr() as *const _, 1);
                 if dl.is_null() {
-                    return Err(DlError::NotFound);
+                    return Err($crate::DlError::NotFound);
                 }
                 $crate::ffi::dlerror();
                 let s = $structname {
@@ -102,7 +102,7 @@ macro_rules! external_library(
                         let s_name = concat!(stringify!($sname), "\0");
                         let symbol = $crate::ffi::dlsym(dl, s_name.as_ptr() as *const _);
                         if !$crate::ffi::dlerror().is_null() {
-                            return Err(DlError::MissingSymbol(s_name))
+                            return Err($crate::DlError::MissingSymbol(s_name))
                         }
                         ::std::mem::transmute(symbol)
                     },
@@ -111,7 +111,7 @@ macro_rules! external_library(
                         let s_name = concat!(stringify!($fname), "\0");
                         let symbol = $crate::ffi::dlsym(dl, s_name.as_ptr() as *const _);
                         if !$crate::ffi::dlerror().is_null() {
-                            return Err(DlError::MissingSymbol(s_name))
+                            return Err($crate::DlError::MissingSymbol(s_name))
                         }
                         ::std::mem::transmute(symbol)
                     },
@@ -120,7 +120,7 @@ macro_rules! external_library(
                         let s_name = concat!(stringify!($vname), "\0");
                         let symbol = $crate::ffi::dlsym(dl, s_name.as_ptr() as *const _);
                         if !$crate::ffi::dlerror().is_null() {
-                            return Err(DlError::MissingSymbol(s_name))
+                            return Err($crate::DlError::MissingSymbol(s_name))
                         }
                         ::std::mem::transmute(symbol)
                     },
