@@ -8,7 +8,7 @@ description = "Helper macros for handling manually loading optionnal system libr
 
 
 [dependencies]
-libc = "0.1"
+libloading = "0.2.0"
 
 [features]
 dlopen = []
