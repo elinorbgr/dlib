@@ -61,7 +61,7 @@ pub struct Foo {
 
 
 impl Foo {
-    pub fn open(name: &str) -> Result<Foo, &'static str> { /* ... */ }
+    pub fn open(name: &str) -> Result<Foo, DlError> { /* ... */ }
 }
 ```
 
@@ -79,7 +79,7 @@ If you want your crate to remain generic over the `dlopen` cargo feature, simply
 
 ```
 [dependencies]
-dlib = "0.1"
+dlib = "0.2"
 
 [features]
 dlopen = ["dlib/dlopen"]
