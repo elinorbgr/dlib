@@ -12,14 +12,14 @@ dlib defines the `external_library!` macro, which can be invoked with way:
 external_library!(Foo, "foo",
     statics:
         me: c_int,
-        you: c_float
+        you: c_float,
     functions:
         fn foo() -> c_int,
         fn bar(c_int, c_float) -> (),
-        fn baz(*const c_int) -> c_int
+        fn baz(*const c_int) -> c_int,
     varargs:
         fn blah(c_int, c_int ...) -> *const c_void,
-        fn bleh(c_int ...) -> ()
+        fn bleh(c_int ...) -> (),
 );
 ```
 
