@@ -1,7 +1,10 @@
-# dlib, making native libraries optionnal
+# dlib, making native libraries optional
+
+[![](http://meritbadge.herokuapp.com/dlib)](https://crates.io/crates/dlib)
+[![Docs.rs](https://docs.rs/dlib/badge.svg)](https://docs.rs/dlib)
 
 dlib is a small crate providing macros to make easy the use of external system libraries
-that can or cannot be optionnaly loaded at runtime, depending on wether the `dlopen` cargo
+that can or cannot be optionally loaded at runtime, depending on whether the `dlopen` cargo
 feature is enabled.
 
 ## Usage
@@ -23,8 +26,8 @@ external_library!(Foo, "foo",
 );
 ```
 
-As you can see, it is required to separate static values from functions and form function
-having variadic arguments. Each of these 3 categories is optionnal, but the one used must appear
+As you can see, it is required to separate static values from functions and from function
+having variadic arguments. Each of these 3 categories is optional, but the ones used must appear
 in this order. Return types of the functions must all be explicit (hence `-> ()` for void functions).
 
 If the feature `dlopen` is absent, this macro will expand to an extern block defining each of the
@@ -44,7 +47,7 @@ extern "C" {
 
 ```
 
-If the freature `dlopen` is absent, it will expand to a `struct` named by the first argument of the macro,
+If the feature `dlopen` is present, it will expand to a `struct` named by the first argument of the macro,
 with one field for each of the symbols defined, and a method `open`, which tries to load the library
 from the name or path given as argument
 
@@ -66,7 +69,7 @@ impl Foo {
 ```
 
 This method returns `Ok(..)` if the loading was successful. It contains an instance of the defined struct
-with all its fields pointing to the appropriate symbol.
+with all of its fields pointing to the appropriate symbol.
 
 If the library specified by `name` could not be found, it returns `Err(DlError::NotFount)`.
 
@@ -89,14 +92,14 @@ And the library also provides helper macros to dispatch the access to foreign sy
 
 ```rust
 ffi_dispatch!(Foo, function, arg1, arg2);
-ffi_displatch_static(Foo, static);
+ffi_dispatch_static!(Foo, static);
 ```
 
 These will expand to the appropriate value or function call depending on the presence of the `dlopen` feature.
 
 You must still ensure that the functions/statics or the wrapper struct `Foo` are in scope. A simple pattern would be
-for example to une the `lazy_static!` crate to do the initialization and store the wrapper struct in a static, that you then
-just need to import everywhere needed. Then, it can become as simple as putting this on top of all modules using the ffi:
+for example to use the `lazy_static!` crate to do the initialization and store the wrapper struct in a static, that you then
+just need to import everywhere needed. Then, it can become as simple as putting this on top of all modules using the FFI:
 
 ```rust
 #[cfg(features = "dlopen")]

@@ -4,7 +4,7 @@ version = "0.4.0"
 repository = "https://github.com/vberger/dlib"
 authors = ["Victor Berger <victor.berger@m4x.org>"]
 license = "MIT"
-description = "Helper macros for handling manually loading optionnal system libraries."
+description = "Helper macros for handling manually loading optional system libraries."
 
 
 [dependencies]
