@@ -128,12 +128,12 @@ macro_rules! dlopen_external_library(
         $(functions: $(fn $fname: ident($($farg: ty),*) -> $fret:ty),+,)|*
         $(varargs: $(fn $vname: ident($($vargs: ty),+) -> $vret: ty),+,)|*
     ) => (
-        dlopen_external_library!(__struct,
+        $crate::dlopen_external_library!(__struct,
             $structname, $(statics: $($sname: $stype),+,)|*
             $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
             $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
         );
-        dlopen_external_library!(__impl,
+        $crate::dlopen_external_library!(__impl,
             $structname, $(statics: $($sname: $stype),+,)|*
             $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
             $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
@@ -150,14 +150,14 @@ macro_rules! external_library(
         $(varargs: $(fn $vname: ident($($vargs: ty),+) -> $vret: ty),+,)|*
     ) => (
         #[cfg(feature = $feature)]
-        dlopen_external_library!(
+        $crate::dlopen_external_library!(
             $structname, $(statics: $($sname: $stype),+,)|*
             $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
             $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
         );
 
         #[cfg(not(feature = $feature))]
-        link_external_library!(
+        $crate::link_external_library!(
             $link, $(statics: $($sname: $stype),+,)|*
             $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
             $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
