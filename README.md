@@ -3,16 +3,15 @@
 [![](http://meritbadge.herokuapp.com/dlib)](https://crates.io/crates/dlib)
 [![Docs.rs](https://docs.rs/dlib/badge.svg)](https://docs.rs/dlib)
 
-dlib is a small crate providing macros to make easy the use of external system libraries
-that can or cannot be optionally loaded at runtime, depending on whether the `dlopen` cargo
-feature is enabled.
+dlib is a small crate providing macros to make easy the use of external system libraries that
+can or cannot be optionally loaded at runtime, depending on whether a certain feature is enabled.
 
 ## Usage
 
-dlib defines the `external_library!` macro, which can be invoked with way:
+dlib defines the `external_library!` macro, which can be invoked in this way:
 
 ```rust
-external_library!(Foo, "foo",
+external_library!("dlopen-foo", Foo, "foo",
     statics:
         me: c_int,
         you: c_float,
@@ -30,8 +29,9 @@ As you can see, it is required to separate static values from functions and from
 having variadic arguments. Each of these 3 categories is optional, but the ones used must appear
 in this order. Return types of the functions must all be explicit (hence `-> ()` for void functions).
 
-If the feature `dlopen` is absent, this macro will expand to an extern block defining each of the
-items, using the second argument of the macro as a link name:
+If the feature named by the first argument (in this example, `dlopen-foo`) is absent on your crate,
+this macro will expand to an extern block defining each of the items, using the third argument
+of the macro as a link name:
 
 ```rust
 #[link(name = "foo")]
@@ -47,9 +47,9 @@ extern "C" {
 
 ```
 
-If the feature `dlopen` is present, it will expand to a `struct` named by the first argument of the macro,
-with one field for each of the symbols defined, and a method `open`, which tries to load the library
-from the name or path given as argument
+If the feature named by the first argument is present on your crate, it will expand to a `struct`
+named by the second argument of the macro, with one field for each of the symbols defined;
+and a method `open`, which tries to load the library from the name or path given as an argument.
 
 ```rust
 pub struct Foo {
@@ -73,37 +73,57 @@ with all of its fields pointing to the appropriate symbol.
 
 If the library specified by `name` could not be found, it returns `Err(DlError::NotFount)`.
 
-It will also fail on the first missing symbol, with `Err(DlError::MissingSymbol(symb))` where `symb` is a `&str`
-containing the missing symbol name.
+It will also fail on the first missing symbol, with `Err(DlError::MissingSymbol(symb))` where `symb`
+is a `&str` containing the missing symbol name.
 
 ## Remaining generic in your crate
 
-If you want your crate to remain generic over the `dlopen` cargo feature, simply add this to your `Cargo.toml`
+If you want your crate to remain generic over dlopen vs. linking, simply add a feature to your `Cargo.toml`:
 
-```
+```toml
 [dependencies]
-dlib = "0.2"
+dlib = "0.5"
 
 [features]
-dlopen = ["dlib/dlopen"]
+dlopen-foo = []
 ```
 
-And the library also provides helper macros to dispatch the access to foreign symbols:
+Then give the name of that feature as the first argument to dlib's macros:
 
 ```rust
-ffi_dispatch!(Foo, function, arg1, arg2);
-ffi_dispatch_static!(Foo, static);
+external_library!("dlopen-foo", Foo, "foo",
+    functions:
+        fn foo() -> c_int,
+);
 ```
 
-These will expand to the appropriate value or function call depending on the presence of the `dlopen` feature.
-
-You must still ensure that the functions/statics or the wrapper struct `Foo` are in scope. A simple pattern would be
-for example to use the `lazy_static!` crate to do the initialization and store the wrapper struct in a static, that you then
-just need to import everywhere needed. Then, it can become as simple as putting this on top of all modules using the FFI:
+`dlib` provides helper macros to dispatch the access to foreign symbols:
 
 ```rust
-#[cfg(features = "dlopen")]
+ffi_dispatch!("dlopen-foo", Foo, function, arg1, arg2);
+ffi_dispatch_static!("dlopen-foo", Foo, my_static_var);
+```
+
+These will expand to the appropriate value or function call depending on the presence or absence of the
+`dlopen-foo` feature on your crate.
+
+You must still ensure that the functions/statics or the wrapper struct `Foo` are in scope. For example,
+you could use the [`lazy_static`](https://crates.io/crates/lazy_static) crate to do the initialization,
+and store the wrapper struct in a static variable that you import wherever needed:
+
+```rust
+#[cfg(feature = "dlopen-foo")]
+lazy_static::lazy_static! {
+    pub static ref FOO_STATIC: Foo =
+        Foo::open("libfoo.so").ok().expect("could not find libfoo");
+}
+```
+
+Then, it can become as simple as putting this on top of all modules using the FFI:
+
+```rust
+#[cfg(feature = "dlopen-foo")]
 use ffi::FOO_STATIC;
-#[cfg(not(features = "dlopen"))]
+#[cfg(not(feature = "dlopen-foo"))]
 use ffi::*;
 ```
