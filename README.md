@@ -11,7 +11,7 @@ can or cannot be optionally loaded at runtime, depending on whether a certain fe
 dlib defines the `external_library!` macro, which can be invoked in this way:
 
 ```rust
-external_library!("dlopen-foo", Foo, "foo",
+external_library!(feature="dlopen-foo", Foo, "foo",
     statics:
         me: c_int,
         you: c_float,
@@ -29,7 +29,7 @@ As you can see, it is required to separate static values from functions and from
 having variadic arguments. Each of these 3 categories is optional, but the ones used must appear
 in this order. Return types of the functions must all be explicit (hence `-> ()` for void functions).
 
-If the feature named by the first argument (in this example, `dlopen-foo`) is absent on your crate,
+If the feature named by the `feature` argument (in this example, `dlopen-foo`) is absent on your crate,
 this macro will expand to an extern block defining each of the items, using the third argument
 of the macro as a link name:
 
@@ -47,8 +47,8 @@ extern "C" {
 
 ```
 
-If the feature named by the first argument is present on your crate, it will expand to a `struct`
-named by the second argument of the macro, with one field for each of the symbols defined;
+If the feature named by the `feature` argument is present on your crate, it will expand to a
+`struct` named by the second argument of the macro, with one field for each of the symbols defined;
 and a method `open`, which tries to load the library from the name or path given as an argument.
 
 ```rust
@@ -88,10 +88,10 @@ dlib = "0.5"
 dlopen-foo = []
 ```
 
-Then give the name of that feature as the first argument to dlib's macros:
+Then give the name of that feature as the `feature` argument to dlib's macros:
 
 ```rust
-external_library!("dlopen-foo", Foo, "foo",
+external_library!(feature="dlopen-foo", Foo, "foo",
     functions:
         fn foo() -> c_int,
 );
@@ -100,8 +100,8 @@ external_library!("dlopen-foo", Foo, "foo",
 `dlib` provides helper macros to dispatch the access to foreign symbols:
 
 ```rust
-ffi_dispatch!("dlopen-foo", Foo, function, arg1, arg2);
-ffi_dispatch_static!("dlopen-foo", Foo, my_static_var);
+ffi_dispatch!(feature="dlopen-foo", Foo, function, arg1, arg2);
+ffi_dispatch_static!(feature="dlopen-foo", Foo, my_static_var);
 ```
 
 These will expand to the appropriate value or function call depending on the presence or absence of the

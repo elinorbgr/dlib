@@ -4,7 +4,7 @@ pub use libloading::{Library, Symbol};
 
 #[macro_export]
 macro_rules! ffi_dispatch(
-    ($feature: expr, $handle: ident, $func: ident, $($arg: expr),*) => (
+    (feature=$feature: expr, $handle: ident, $func: ident, $($arg: expr),*) => (
         {
             #[cfg(feature = $feature)]
             let ret = ($handle.$func)($($arg),*);
@@ -14,11 +14,15 @@ macro_rules! ffi_dispatch(
             ret
         }
     );
+    ($handle: ident, $func: ident, $($arg: expr),*) => (
+        // NOTE: this "dlopen" refers to a feature on the crate *using* dlib
+        $crate::ffi_dispatch!(feature="dlopen", $handle, $func, $($arg),*)
+    );
 );
 
 #[macro_export]
 macro_rules! ffi_dispatch_static(
-    ($feature: expr, $handle: ident, $name: ident) => (
+    (feature=$feature: expr, $handle: ident, $name: ident) => (
         {
             #[cfg(feature = $feature)]
             let ret = $handle.$name;
@@ -27,6 +31,9 @@ macro_rules! ffi_dispatch_static(
 
             ret
         }
+    );
+    ($handle:ident, $name: ident) => (
+        $crate::ffi_dispatch_static!(feature="dlopen", $handle, $name)
     );
 );
 
@@ -144,7 +151,7 @@ macro_rules! dlopen_external_library(
 
 #[macro_export]
 macro_rules! external_library(
-    ($feature: expr, $structname: ident, $link: expr,
+    (feature=$feature: expr, $structname: ident, $link: expr,
         $(statics: $($sname: ident: $stype: ty),+,)|*
         $(functions: $(fn $fname: ident($($farg: ty),*) -> $fret:ty),+,)|*
         $(varargs: $(fn $vname: ident($($vargs: ty),+) -> $vret: ty),+,)|*
@@ -159,6 +166,18 @@ macro_rules! external_library(
         #[cfg(not(feature = $feature))]
         $crate::link_external_library!(
             $link, $(statics: $($sname: $stype),+,)|*
+            $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
+            $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
+        );
+    );
+    ($structname: ident, $link: expr,
+        $(statics: $($sname: ident: $stype: ty),+,)|*
+        $(functions: $(fn $fname: ident($($farg: ty),*) -> $fret:ty),+,)|*
+        $(varargs: $(fn $vname: ident($($vargs: ty),+) -> $vret: ty),+,)|*
+    ) => (
+        $crate::external_library!(
+            feature="dlopen", $structname, $link,
+            $(statics: $($sname: $stype),+,)|*
             $(functions: $(fn $fname($($farg),*) -> $fret),+,)|*
             $(varargs: $(fn $vname($($vargs),+) -> $vret),+,)|*
         );
