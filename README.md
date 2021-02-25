@@ -1,12 +1,12 @@
-# dlib, making native libraries optional
+[![crates.io](http://meritbadge.herokuapp.com/dlib)](https://crates.io/crates/dlib)
+[![docs.rs](https://docs.rs/dlib/badge.svg)](https://docs.rs/dlib)
 
-[![](http://meritbadge.herokuapp.com/dlib)](https://crates.io/crates/dlib)
-[![Docs.rs](https://docs.rs/dlib/badge.svg)](https://docs.rs/dlib)
+# dlib
 
 dlib is a small crate providing macros to make easy the use of external system libraries that
 can or cannot be optionally loaded at runtime, depending on whether a certain feature is enabled.
 
-## Usage
+### Usage
 
 dlib defines the `external_library!` macro, which can be invoked in this way:
 
@@ -76,7 +76,7 @@ If the library specified by `name` could not be found, it returns `Err(DlError::
 It will also fail on the first missing symbol, with `Err(DlError::MissingSymbol(symb))` where `symb`
 is a `&str` containing the missing symbol name.
 
-## Remaining generic in your crate
+### Remaining generic in your crate
 
 If you want your crate to remain generic over dlopen vs. linking, simply add a feature to your `Cargo.toml`:
 
@@ -127,3 +127,5 @@ use ffi::FOO_STATIC;
 #[cfg(not(feature = "dlopen-foo"))]
 use ffi::*;
 ```
+
+License: MIT
