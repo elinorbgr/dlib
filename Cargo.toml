@@ -1,11 +1,12 @@
 [package]
 name = "dlib"
-version = "0.4.2"
+version = "0.5.0"
 repository = "https://github.com/vberger/dlib"
 authors = ["Victor Berger <victor.berger@m4x.org>"]
 license = "MIT"
 description = "Helper macros for handling manually loading optional system libraries."
 exclude = ["/dlib-test", "README.tpl"]
+readme = "README.md"
 
 [dependencies]
 libloading = "0.7"

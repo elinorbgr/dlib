@@ -64,17 +64,22 @@ pub struct Foo {
 
 
 impl Foo {
-    pub fn open(name: &str) -> Result<Foo, DlError> { /* ... */ }
+    pub unsafe fn open(name: &str) -> Result<Foo, DlError> { /* ... */ }
 }
 ```
 
 This method returns `Ok(..)` if the loading was successful. It contains an instance of the defined struct
 with all of its fields pointing to the appropriate symbol.
 
-If the library specified by `name` could not be found, it returns `Err(DlError::NotFount)`.
+If the library specified by `name` could not be openened, it returns `Err(DlError::CantOpen(e))`, with
+`e` the error reported by `libloading` (see [LibLoadingError]);
 
 It will also fail on the first missing symbol, with `Err(DlError::MissingSymbol(symb))` where `symb`
 is a `&str` containing the missing symbol name.
+
+Note that this method is unsafe, as loading (and unloading on drop) an external C library can run arbitrary
+code. As such, you need to ensure that the specific library you want to load is safe to load in the context
+you want to load it.
 
 ### Remaining generic in your crate
 
