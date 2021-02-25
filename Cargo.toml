@@ -5,6 +5,7 @@ repository = "https://github.com/vberger/dlib"
 authors = ["Victor Berger <victor.berger@m4x.org>"]
 license = "MIT"
 description = "Helper macros for handling manually loading optional system libraries."
+exclude = ["/dlib-test", "README.tpl"]
 
 [dependencies]
 libloading = "0.7"
