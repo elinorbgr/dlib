@@ -7,6 +7,8 @@ license = "MIT"
 description = "Helper macros for handling manually loading optional system libraries."
 exclude = ["/dlib-test", "README.tpl"]
 readme = "README.md"
+keywords = ["dylib", "dlopen"]
+categories = ["api-bindings"]
 
 [dependencies]
 libloading = "0.7"
