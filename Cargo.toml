@@ -7,4 +7,4 @@ license = "MIT"
 description = "Helper macros for handling manually loading optional system libraries."
 
 [dependencies]
-libloading = "0.6"
+libloading = "0.7"
