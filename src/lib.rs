@@ -253,7 +253,7 @@ impl std::fmt::Display for DlError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
             DlError::CantOpen(ref e) => write!(f, "Could not open the requested library: {}", e),
-            DlError::MissingSymbol(s) => write!(f, "The resquested symbol was missing: {}", s),
+            DlError::MissingSymbol(s) => write!(f, "The requested symbol was missing: {}", s),
         }
     }
 }
