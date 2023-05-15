@@ -11,4 +11,4 @@ keywords = ["dylib", "dlopen"]
 categories = ["api-bindings"]
 
 [dependencies]
-libloading = "0.7"
+libloading = "0.8"
