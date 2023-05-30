@@ -156,7 +156,7 @@ pub use libloading::{Library, Symbol};
 /// ```
 #[macro_export]
 macro_rules! ffi_dispatch(
-    (feature=$feature: expr, $handle: ident, $func: ident, $($arg: expr),*) => (
+    (feature=$feature: expr, $handle: expr, $func: ident, $($arg: expr),*) => (
         {
             #[cfg(feature = $feature)]
             let ret = ($handle.$func)($($arg),*);
@@ -166,7 +166,7 @@ macro_rules! ffi_dispatch(
             ret
         }
     );
-    ($handle: ident, $func: ident, $($arg: expr),*) => (
+    ($handle: expr, $func: ident, $($arg: expr),*) => (
         // NOTE: this "dlopen" refers to a feature on the crate *using* dlib
         $crate::ffi_dispatch!(feature="dlopen", $handle, $func, $($arg),*)
     );
@@ -190,7 +190,7 @@ macro_rules! ffi_dispatch(
 /// ```
 #[macro_export]
 macro_rules! ffi_dispatch_static(
-    (feature=$feature: expr, $handle: ident, $name: ident) => (
+    (feature=$feature: expr, $handle: expr, $name: ident) => (
         {
             #[cfg(feature = $feature)]
             let ret = $handle.$name;
@@ -200,7 +200,7 @@ macro_rules! ffi_dispatch_static(
             ret
         }
     );
-    ($handle:ident, $name: ident) => (
+    ($handle:expr, $name: ident) => (
         $crate::ffi_dispatch_static!(feature="dlopen", $handle, $name)
     );
 );
