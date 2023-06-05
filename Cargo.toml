@@ -1,6 +1,6 @@
 [package]
 name = "dlib"
-version = "0.5.1"
+version = "0.5.2"
 repository = "https://github.com/elinorbgr/dlib"
 authors = ["Elinor Berger <elinor@safaradeg.net>"]
 license = "MIT"
@@ -11,4 +11,4 @@ keywords = ["dylib", "dlopen"]
 categories = ["api-bindings"]
 
 [dependencies]
-libloading = "0.7"
+libloading = ">=0.7, <0.9"
