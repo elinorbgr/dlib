@@ -1,8 +1,8 @@
 [package]
 name = "dlib"
-version = "0.5.0"
-repository = "https://github.com/vberger/dlib"
-authors = ["Victor Berger <victor.berger@m4x.org>"]
+version = "0.5.1"
+repository = "https://github.com/elinorbgr/dlib"
+authors = ["Elinor Berger <elinor@safaradeg.net>"]
 license = "MIT"
 description = "Helper macros for handling manually loading optional system libraries."
 exclude = ["/dlib-test", "README.tpl"]
